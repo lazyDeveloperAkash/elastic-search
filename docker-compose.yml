@@ -1,0 +1,85 @@
+name: elastic-app
+
+services:
+  elastic-postgres:
+    image: postgres:17.6
+    container_name: elastic-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres123
+      POSTGRES_DB: elastic-search-db
+    volumes:
+      - elastic_postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    networks:
+      - elastic-net
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch-wolfi:9.2.0
+    container_name: elasticsearch
+    environment:
+      - node.name=elasticsearch
+      - cluster.name=es-docker-cluster
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+    networks:
+      - elastic-net
+
+  elastic-backend:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: elastic-backend
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    command: npm run dev
+    restart: always
+    environment:
+      DATABASE_URL: postgres://postgres:postgres123@elastic-postgres:5432/elastic-search-db
+    ports:
+      - "8080:8080"
+    networks:
+      - elastic-net
+    depends_on:
+      - elastic-postgres
+      - elasticsearch
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:9.2.0
+    container_name: kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+      - "5601:5601"
+    networks:
+      - elastic-net
+    depends_on:
+      - elasticsearch
+
+  prisma-studio:
+    image: node:22-alpine
+    container_name: prisma-studio
+    working_dir: /app
+    volumes:
+      - ./server:/app
+    command: sh -c "npx prisma studio --port 5555"
+    ports:
+      - "5555:5555"
+    networks:
+      - elastic-net
+    depends_on:
+      - elastic-postgres
+
+volumes:
+  elastic_postgres_data:
+  elasticsearch_data:
+
+networks:
+  elastic-net:
+    driver: bridge
