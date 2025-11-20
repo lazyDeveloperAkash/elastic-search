@@ -63,7 +63,6 @@ Misspellings and partial queries still return correct results.\
     │── docker-compose.yml
     │── server/          # Node.js backend
     │── client/          # React.js (Vite) frontend
-    │── prisma/          # Prisma schema & migrations
     └── README.md
 
 ------------------------------------------------------------------------
