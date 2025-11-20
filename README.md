@@ -149,7 +149,7 @@ npx prisma studio
 This project is a complete search ecosystem demonstrating how modern
 apps use Elasticsearch for:
 
--   Smart recommendations\
--   Fuzzy matching\
--   High‑speed querying\
+-   Smart recommendations
+-   Fuzzy matching
+-   High‑speed querying
 -   Related product discovery
