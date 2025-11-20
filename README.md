@@ -73,7 +73,6 @@ Misspellings and partial queries still return correct results.\
 
 ``` sh
 git clone https://github.com/lazyDeveloperAkash/elastic-search.git
-
 cd elastic-search
 ```
 
@@ -98,13 +97,14 @@ docker compose up --build
 
 ## 🌐 Access URLs
 
-  App                URL
-  ------------------ -----------------------
-  Frontend           http://localhost:5173
-  Backend API        http://localhost:8080
-  Elasticsearch      http://localhost:9200
-  Kibana Dashboard   http://localhost:5601
-  Prisma Studio      http://localhost:5555
+| App              | URL                        |
+|------------------|----------------------------|
+| Frontend         | http://localhost:5173      |
+| Backend API      | http://localhost:8080      |
+| Elasticsearch    | http://localhost:9200      |
+| Kibana Dashboard | http://localhost:5601      |
+| Prisma Studio    | http://localhost:5555      |
+
 
 ------------------------------------------------------------------------
 
