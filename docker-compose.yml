@@ -76,6 +76,24 @@ services:
     depends_on:
       - elastic-postgres
 
+  elastic-frontend:
+    build: 
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: elastic-frontend
+    working_dir: /app
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    command: npm run dev -- --host 0.0.0.0
+    ports:
+      - "5173:5173"
+    networks:
+      - elastic-net
+    restart: always
+
 volumes:
   elastic_postgres_data:
   elasticsearch_data:

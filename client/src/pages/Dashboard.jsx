@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useProduct } from "../context/productContext";
 import ProductList from "../components/ProductsList";
 import SearchBar from "../components/SearchBar";
@@ -29,9 +29,7 @@ const Dashboard = () => {
             Create Product
           </button>
         </div>
-        <div className="flex items-start">
-          <SearchBar />
-        </div>
+        <SearchBar />
         <ProductList products={products} />
       </div>
     </div>
