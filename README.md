@@ -2,11 +2,11 @@
 
 A modern **full-stack search platform** built with:
 
--   **Elasticsearch** -- ultra-fast, intelligent search\
--   **Kibana** -- analytics and search visualization\
--   **Node.js + Express** -- backend REST API\
--   **React.js (Vite)** -- high-performance frontend UI\
--   **PostgreSQL + Prisma** -- relational database + ORM\
+-   **Elasticsearch** -- ultra-fast, intelligent search
+-   **Kibana** -- analytics and search visualization
+-   **Node.js + Express** -- backend REST API
+-   **React.js (Vite)** -- high-performance frontend UI
+-   **PostgreSQL + Prisma** -- relational database + ORM
 -   **Docker + Docker Compose** -- fully containerized environment
 
 This application implements **real-time search capabilities** commonly
@@ -50,9 +50,9 @@ Misspellings and partial queries still return correct results.\
 
 ### **Tools & DevOps**
 
--   Docker\
--   Docker Compose\
--   Kibana\
+-   Docker
+-   Docker Compose
+-   Kibana
 -   Prisma Studio
 
 ------------------------------------------------------------------------
