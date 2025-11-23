@@ -9,9 +9,9 @@ export default function SearchBar() {
   const [show, setShow] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
   const ref = useRef();
+  const inputRef = useRef();
   const { fuzzySearch } = useProduct();
 
-  // Close dropdown on outside click
   useEffect(() => {
     const onClick = (e) => {
       if (!ref.current?.contains(e.target)) {
@@ -23,6 +23,20 @@ export default function SearchBar() {
     return () => document.removeEventListener("click", onClick);
   }, []);
 
+  const sortData = (result = [], term = "") => {
+    console.log(result);
+    const sorted = result.sort((a, b) => {
+      const posA = a.title.toLowerCase().indexOf(term.toLowerCase());
+      const posB = b.title.toLowerCase().indexOf(term.toLowerCase());
+
+      if (posA === -1) return 1;
+      if (posB === -1) return -1;
+      return posA - posB;
+    });
+
+    setSuggestions(sorted);
+  };
+
   const fetchSuggestions = debounce(async (term) => {
     if (!term || term.length < 1) {
       setSuggestions([]);
@@ -32,7 +46,7 @@ export default function SearchBar() {
       const res = await axios.get(
         `http://localhost:8080/product/search/suggest?q=${term}`
       );
-      setSuggestions(res?.data || []);
+      sortData(res?.data || [], term);
       setShow(true);
       setActiveIndex(-1);
     } catch (err) {
@@ -45,16 +59,12 @@ export default function SearchBar() {
 
     if (e.key === "ArrowDown") {
       e.preventDefault();
-      setActiveIndex((prev) =>
-        prev < suggestions.length - 1 ? prev + 1 : 0
-      );
+      setActiveIndex((prev) => (prev < suggestions.length - 1 ? prev + 1 : 0));
     }
 
     if (e.key === "ArrowUp") {
       e.preventDefault();
-      setActiveIndex((prev) =>
-        prev > 0 ? prev - 1 : suggestions.length - 1
-      );
+      setActiveIndex((prev) => (prev > 0 ? prev - 1 : suggestions.length - 1));
     }
 
     if (e.key === "Enter") {
@@ -73,11 +83,27 @@ export default function SearchBar() {
     }
   };
 
+  const handleOnChange = (e) => {
+    setQ(e.target.value);
+    if (e.target.value.trim(" ") === "") {
+      setShow(false);
+      return;
+    }
+    fetchSuggestions(q);
+  };
+
+  const highlightText = (text, keyword) => {
+    if (!keyword) return text;
+    const regex = new RegExp(`(${keyword})`, "gi");
+    return text.replace(regex, `<span style="color:black; font-weight:600">$1</span>`);
+  };
+
   return (
     <div ref={ref} className="relative">
       <input
+        ref={inputRef}
         value={q}
-        onChange={(e) => {setQ(e.target.value); fetchSuggestions(q)}}
+        onChange={handleOnChange}
         onFocus={() => q && setShow(true)}
         onKeyDown={handleKeyDown}
         className="w-full sm:w-96 border border-gray-300 rounded-lg p-3 text-gray-700
@@ -86,7 +112,10 @@ export default function SearchBar() {
       />
 
       {show && suggestions.length > 0 && (
-        <ul className="absolute left-0 right-0 bg-white mt-1 z-50 max-h-60 overflow-auto rounded-lg shadow-sm">
+        <ul
+          className={`absolute left-0 right-0 bg-white mt-1 z-50 max-h-60 overflow-auto rounded-lg shadow-sm`}
+          style={{ width: inputRef.current.offsetWidth }}
+        >
           {suggestions.map((s, i) => (
             <li
               key={s.id}
@@ -99,7 +128,11 @@ export default function SearchBar() {
                 setShow(false);
               }}
             >
-              {s.title}
+              <span className="text-gray-500"
+                dangerouslySetInnerHTML={{
+                  __html: highlightText(s.title, q),
+                }}
+              />
             </li>
           ))}
         </ul>
